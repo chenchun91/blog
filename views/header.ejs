@@ -13,7 +13,7 @@
 
 <nav>
 <span><a title="主页" href="/">home</a></span>
-<% if(user){%>
+<% if(user){ %>
 <span><a title = "上传" href = "/upload">upload</a>
 <span><a title = "发表" href = "/post">post</a></span>
 <span><a title = "登出" href = "/logout">logout</a></span>
@@ -28,5 +28,5 @@
     <div><%= success %></div>
 <% } %>
 <% if(error){ %>
-    <div><%= error%></div>
+    <div><%= error %></div>
  <% } %>
