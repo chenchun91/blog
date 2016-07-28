@@ -5,29 +5,29 @@ function Comment(name, day, title, comment){
   this.day = day;
   this.title = title;
   this.comment = comment;
-};
+}
 
 module.exports = Comment;
 
-//´¢´æÒ»ÌõÁôÑÔĞÅÏ¢
+//å‚¨å­˜ä¸€æ¡ç•™è¨€ä¿¡æ¯
 Comment.prototype.save = function(callback){
   var name = this.name,
 	  day = this.day,
 	  title = this.title,
 	  comment = this.comment;
 
-  //´ò¿ªÊı¾İ¿â
+  //æ‰“å¼€æ•°æ®åº“
   mongodb.open(function(err, db){
     if(err){
 	  return callbck(err);
 	}
-	//¶ÁÈ¡Êı¾İ¼¯ºÏ
+	//è¯»å–æ•°æ®é›†åˆ
 	db.collection('posts', function(err, collection){
 	  if(err){
 	    mongodb.close();
 		return callback(err);
 	  }
-	  //Í¨¹ıÓÃ»§Ãû¡¢Ê±¼ä¼°±êÌâ²éÕÒÎÄµµ£¬²¢°ÑÒ»ÌõÁôÑÔ¶ÔÏóÌí¼Óµ½¸ÃÎÄµµµÄ comments Êı×éÀï
+	  //é€šè¿‡ç”¨æˆ·åã€æ—¶é—´åŠæ ‡é¢˜æŸ¥æ‰¾æ–‡æ¡£ï¼Œå¹¶æŠŠä¸€æ¡ç•™è¨€å¯¹è±¡æ·»åŠ åˆ°è¯¥æ–‡æ¡£çš„ comments æ•°ç»„é‡Œ
 	  collection.update({
 	    "name": name,
 		"time.day": day,

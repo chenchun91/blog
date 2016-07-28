@@ -2,6 +2,6 @@ var settings = require('../settings'),
     Db = require('mongodb').Db,
     Connection = require('mongodb').Connection,
     Server = require('mongodb').Server;
-	//设置数据库名、数据库地址和数据库端口创建了一个数据库连接实例
+	//璁剧疆鏁版嵁搴撳悕銆佹暟鎹簱鍦板潃鍜屾暟鎹簱绔彛鍒涘缓浜嗕竴涓暟鎹簱杩炴帴瀹炰緥
     module.exports = new Db(settings.db
 	, new Server(settings.host, settings.port), {safe: true});
