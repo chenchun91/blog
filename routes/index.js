@@ -16,70 +16,70 @@ module.exports = function(app) {
 	//查询并返回page页的十篇文章
 	Post.getTen(null, page, function(err, posts, total){
 	  if(err){
-		posts = [];
+		  posts = [];
 	  }
 	  res.render('index', { 
-		title: '主页',
+		title: '网站首页',
 		page: page,
 		isFirstPage: (page - 1) === 0,
-		isLastPage: (page - 1)*5 + posts.length === total,
+		isLastPage: (page - 1)*10 + posts.length === total,
 		user: req.session.user,
 		posts: posts,
+		total: total,
 		success: req.flash('success').toString(),
 		error: req.flash('error').toString()
 	  });
 	}); 
+});
+  
+  app.get('/reg', checkNotLogin, function(req, res){    //检测未登录
+		res.render('reg', {
+			title: '注册',
+			user: req.session.user,
+			success: req.flash('success').toString(),
+			error: req.flash('error').toString()
+		});
   });
   
-  app.get('/reg', checkNotLogin);    //检测未登录
-  app.get('/reg', function(req, res){
-	res.render('reg', {
-	  title: '注册',
-	  user: req.session.user,
-	  success: req.flash('success').toString(),
-	  error: req.flash('error').toString()
-	});
-  });
-  
-  app.post('/reg', checkNotLogin);
-  app.post('/reg', function(req, res){
-	var name = req.body.name,
-		password = req.body.password,
-		password_re = req.body['password-repeat'];
-	if(password !== password_re){
-		req.flash('error', '两次输入的密码的不一致!');
-		return res.redirect('/reg');
-	}
-	//生成密码的 md5 值
-	var md5 = crypto.createHash('md5'),
-		password = md5.update(req.body.password).digest('hex');
-	var newUser = new User({
-		name: name,
-		password: password,
-		email: req.body.email
-	});
-	
-	//检查用户名是否已经存在
-	User.get(newUser.name, function(err, user){
-		if(err){
-			req.flash('error', err);
-			return res.redirect('/');
-		}
-		if(user){
-			req.flash('error', '用户已存在');
+   
+  app.post('/reg', checkNotLogin, function(req, res){
+		var name = req.body.name,
+			password = req.body.password,
+			password_re = req.body['password-repeat'];
+		if(password !== password_re){
+			req.flash('error', '两次输入的密码的不一致!');
 			return res.redirect('/reg');
 		}
-		//如果不存在则新增用户
-		newUser.save(function(err, user){
+		//生成密码的 md5 值
+		var md5 = crypto.createHash('md5'),
+			password = md5.update(req.body.password).digest('hex');
+		var newUser = new User({
+			name: name,
+			password: password,
+			email: req.body.email
+		});
+		
+		//检查用户名是否已经存在
+		User.get(newUser.name, function(err, user){
 			if(err){
 				req.flash('error', err);
-				return res.redirect('/reg');  //注册失败返回主册页
+				return res.redirect('/');
 			}
-			req.session.user = user;     //用户信息存入 session
-			req.flash('success', '注册成功！');
-			res.redirect('/');   //注册成功后返回主页
+			if(user){
+				req.flash('error', '用户已存在');
+				return res.redirect('/reg');
+			}
+			//如果不存在则新增用户
+			newUser.save(function(err, user){
+				if(err){
+					req.flash('error', err);
+					return res.redirect('/reg');  //注册失败返回主册页
+				}
+				req.session.user = user;     //用户信息存入 session
+				req.flash('success', '注册成功！');
+				res.redirect('/');   //注册成功后返回主页
+			});
 		});
-	});
   });
   
   app.get('/login', checkNotLogin);
@@ -96,40 +96,40 @@ module.exports = function(app) {
   app.post('/login', function(req, res){
 	  //生成密码的md5值 
 	  var md5 = crypto.createHash('md5'),
-          password = md5.update(req.body.password).digest('hex');
+        password = md5.update(req.body.password).digest('hex');
 	   //检查用户是否存在
 	  User.get(req.body.name, function (err, user) {
-        if (!user) {
-          req.flash('error', '用户不存在!'); 
-          return res.redirect('/login');
+			if (!user) {
+				req.flash('error', '用户不存在!'); 
+				return res.redirect('/login');
         }
 	    //检查密码是否一致
-        if (user.password !== password) {
-          req.flash('error', '密码错误！'); 
-          return res.redirect('/login');
+			if (user.password !== password) {
+				req.flash('error', '密码错误！'); 
+				return res.redirect('/login');
 		}
 		//用户名密码都匹配后，将用户信息存入 session
-        req.session.user = user;
-        req.flash('success', '登录成功!');
-        res.redirect('/');
+			req.session.user = user;
+			req.flash('success', '登录成功!');
+			res.redirect('/');
 	  });
   });
   
   app.get('/post', checkLogin);
   app.get('/post', function(req, res){
-	 res.render('post', {
-		 title: '发表',
-		 user: req.session.user,
-		 success: req.flash('success').toString(),
-		 error: req.flash('error').toString()
-     }); 
+	  res.render('post', {
+		  title: '发表',
+		  user: req.session.user,
+		  success: req.flash('success').toString(),
+		  error: req.flash('error').toString()
+   }); 
   });
   
   app.post('/post', checkLogin);
   app.post('/post', function(req, res){
 	  var currentUser = req.session.user,
 		  tags = [req.body.tag1, req.body.tag2, req.body.tag3],
-		  post = new Post(currentUser.name, req.body.title, tags, req.body.post);
+		  post = new Post(currentUser.name, currentUser.head, req.body.title, tags, req.body.post);
 	  post.save(function(err){
 		  if(err){
 			  req.flash('error', err);
@@ -158,24 +158,34 @@ module.exports = function(app) {
   });
   app.post('/upload', checkLogin);
   app.post('/upload', function(req, res){
-      req.flash('success', '文件上传成功!');
-      res.redirect('/upload');
+		req.flash('success', '文件上传成功!');
+		res.redirect('/upload');
   });
   
-  app.get('/archive', function(req, res){
-	Post.getArchive(function(err, posts){
-	  if(err){
-	    req.flash('error', err);
-	    return res.redirect('/'); 
-	  }
-	  res.render('archive', {
-	    title: '存档',
-		posts: posts,
-		user: req.session.user,
-		success: req.flash('success').toString(),
-		error: req.flash('error').toString()
-	  });
-	});
+  app.get('/archive/:name/:month', function(req, res){
+		Post.getArchive(req.params.name, req.params.month, function(err, posts){
+			if(err){
+				req.flash('error', err);
+				return res.redirect('/'); 
+			}
+			if(req.session.user){
+				res.render('archive', {
+					title: '存档',
+					posts: posts,
+					user: req.session.user,
+					success: req.flash('success').toString(),
+					error: req.flash('error').toString()
+				});
+			}else{ 
+				res.render('archive', {
+					title: '请先登录！',
+					user: req.session.user,
+					posts: posts,
+					success: req.flash('success').toString(),
+					error: req.flash('error').toString()
+				});
+			}
+		});
   });
  
   app.get('/tags', function(req, res){
@@ -198,12 +208,12 @@ module.exports = function(app) {
     Post.getTag(req.params.tag, function(err, posts){
 	  if(err){
 	    req.flash('error', err);
-		return res.redirect('/');
+		  return res.redirect('/');
 	  }
 	  res.render('tag', {
 		title: 'TAG' + req.params.tag,
 		posts: posts,
-		user: req.body.user,
+		user: req.session.user,
 		success: req.flash('success').toString(),
 		error: req.flash('error').toString()
 	  });
@@ -218,10 +228,10 @@ module.exports = function(app) {
 	  }
 	  res.render('search', {
 	    title: "SEARCH:" + req.query.keyword,
-		user: req.body.user,
-		posts: posts,
-		success: req.flash('success').toString(),
-		error: req.flash('error').toString()
+			user: req.body.user,
+			posts: posts,
+			success: req.flash('success').toString(),
+			error: req.flash('error').toString()
 	  });
 	});
   });
@@ -241,7 +251,7 @@ module.exports = function(app) {
 				  return res.redirect('/');
 			  }
 			  res.render('user', {
-				  title: user.name,
+				  title: user.name + '的博客',
 				  posts: posts,
 				  page: page,
 				  isFirstPage: (page - 1) === 0,
@@ -256,9 +266,9 @@ module.exports = function(app) {
 
   app.get('/u/:name/:day/:title', function(req, res){
 	  Post.getOne(req.params.name, req.params.day, req.params.title, function(err, post){
-	      if(err){
-			  req.flash('error', err);
-			  return res.redirect('/');
+			if(err){
+				req.flash('error', err);
+				return res.redirect('/');
 		  }
 		  res.render('article', {
 			  title: req.params.title,
@@ -312,12 +322,12 @@ module.exports = function(app) {
 	  });
   });
 
- app.post('/edit/:name/:day/:title', checkLogin);
+  app.post('/edit/:name/:day/:title', checkLogin);
   app.post('/edit/:name/:day/:title', function (req, res) {
   var currentUser = req.session.user;
   Post.update(currentUser.name, req.params.day
 	  , req.params.title, req.body.post, function (err) {
-    //var url = encodeURI('/u/' + req.params.name + '/' + req.params.day + '/' + req.params.title);
+    var url = encodeURI('/u/' + req.params.name + '/' + req.params.day + '/' + req.params.title);
     if (err) {
       req.flash('error', err); 
       return res.redirect(url);//出错！返回文章页

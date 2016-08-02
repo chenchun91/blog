@@ -1,6 +1,6 @@
 <br />
 <% post.comments.forEach(function (comment, index) { %>
-  <p><a href="<%= comment.website %>"><%= comment.name %></a>
+  <p><a href="<%= comment.website %>"><%= comment.name %><%= user.name %></a>
   <span class="info"> 回复于 <%= comment.time %></span></p>
   <p><%- comment.content %><hr/></p>
 <% }) %>

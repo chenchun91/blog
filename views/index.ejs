@@ -1,4 +1,51 @@
 ﻿<%- include header %>
+<div class = "container">
+  <div class = "left-sidebar">
+    <div style = "text-align: center; padding: 150px 0.5em 1em .5em;">我的头像<hr/></div> 
+    <ul>
+      <li>文章：<%= total%></li>
+      <li>
+        <% var pv = 0 %>
+        <% posts.forEach(function(post, index){%>
+	  <%pv += post.pv %>
+	<% }) %>
+	访问：<%= pv %>
+      </li>
+      <li>
+        <% var comments = 0 %>
+      	<% posts.forEach(function(post, index){%>
+      	  <% comments += post.comments.length %>
+      	<% }) %>
+        评论：<%= comments %></li> <hr/> 
+    </ul>
+    <div class = "archive">
+        <span> 存档</span>
+	<ul>
+	  <% var month = "" %>
+	  <% posts.forEach(function(post, index){ %>
+	      <% if(post.time.month !== month){ %>
+		<% if(user){ %>
+	         <li><a href = "/archive/<%= user.name%>/<%= post.time.month%>">
+		 <%= post.time.month%></a></li>
+		<% }else{ %>
+		 <li><a href = "/archive/users/<%= post.time.month%>">
+		 <%= post.time.month%></a></li>
+		<% } %>
+	      <%}%>
+	      <% month = post.time.month %>
+	  <%})%>
+	</ul><hr/>
+    </div>
+  </div>
+  <article class = "contains">
+    <h1><%= title %></h1>
+    <% if(success){ %>
+      <div><%= success %></div>
+    <% } %>
+    <% if(error){ %>
+      <div><%= error %></div>
+    <% } %>
+
 <% posts.forEach(function(post, index){ %>
   <p><h2><a href="u/<%= post.name %>/<%= post.time.day %>/<%= post.title %>">
   <%= post.title %></a></h2></p>
@@ -11,10 +58,10 @@
         <a class = "tag" href = "/tags/<%= tag %>"><%= tag %></a>
       <% } %>
     <% }) %>
-  </p>
-  <p><%- post.post %></p>
-  <p class = "info">阅读：<%= post.pv %> | 评论：<%= post.comments.length %></p><hr/>
-  <%})%>
-<%- include paging %>
+      </p>
+      <p><%- post.post %></p>
+      <p class = "info">阅读：<%= post.pv %> | 评论：<%= post.comments.length %></p><hr/>
+      <%})%>
+    <%- include paging %>
 <%- include footer %>
 

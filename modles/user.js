@@ -1,20 +1,25 @@
-﻿var mongodb = require('./db');
+﻿var mongodb = require('./db'),
+    crypto = require('crypto');  //生成散列值来加密密码
 
 function User(user){
 	this.name = user.name;
 	this.password = user.password;
-	this.email = user.emal;
+	this.email = user.email;
 }
 
 module.exports = User;
 
 //存储用户信息
 User.prototype.save = function(callback){
+	var md5 = crypto.createHash('md5'),
+		email_MD5 = md5.update(this.email.toLowerCase()).digest('hex'),
+		head = "http://www.gravatar.com/avatar/" + email_MD5 + "?s=48";
 	//要存入数据库的用户文档
 	var user = {
 		name: this.name,
 		password: this.password,
-		email: this.email
+		email: this.email,   //需要把 email 转化成小写再编码。
+		head: head
 	};
 	//打开数据库
 	mongodb.open(function(err, db){
