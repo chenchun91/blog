@@ -6,12 +6,22 @@
 <link rel="stylesheet" href="/stylesheets/style.css">
 </head>
 <body>
+<div class = "register"> 
+<h1><%= title %></h1>
+<% if(success){ %>
+<div><%= success %></div>
+<% } %>
+<% if(error){ %>
+<div><%= error %></div>
+<% } %>
 <form method="post">
-  用户名：  <input type="text" name="name" required/><br />
-  密码：    <input type="password" name="password" required/><br />
-  确认密码：<input type="password" name="password-repeat" required/><br />
-  邮箱：    <input type="email" name="email"/><br />
-            <input type="submit" value="注册"/>
+	用户名：  &nbsp&nbsp<input type="text" name="name" required/><br />
+	密码：    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input type="password" name="password" required/><br/>
+	确认密码：<input type="password" name="password-repeat" required/><br />
+	邮箱：    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input type="email" name="email"/><br />
+	<input type="submit" value="注册"/>
+	<a href = '/login'><input type = "button" value = "登录"></a>
 </form>
+</div>
 </body>
 </html>

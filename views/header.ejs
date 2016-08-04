@@ -4,6 +4,20 @@
 <meta charset="UTF-8" />
 <title>Blog</title>
 <link rel="stylesheet" href="/stylesheets/style.css">
+<script charset="utf-8" src="/javascripts/KindEditor/kindeditor-min.js"></script>
+<script charset="utf-8" src="/javascripts/KindEditor/lang/zh_CN.js"></script>
+<script>
+	var editor;
+	KindEditor.ready(function(K) {
+	  editor = K.create('textarea', {
+	  allowImageUpload : false,
+	  items : [
+	    'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic',
+	    'underline', 'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright',
+	    'insertorderedlist', 'insertunorderedlist', '|', 'emoticons', 'image', 'link']
+	  });
+	});
+</script>
 </head>
 <body>
 
@@ -15,7 +29,7 @@
   <!-- <li><a href = "/tags">标签</a></li>  -->
   <% if(user){ %>
 		<li class = "logo"><a href = "/u/<%= user.name%>">我的博客</a></li>
-		<li><a href = "/upload">上传</a></li>
+		<!-- <li><a href = "/upload">上传</a></li> -->
 		<li><a href = "/post">发表</a></li>
 		<li><a href = "/logout">退出</a></li>
 		<% }else{ %>

@@ -1,7 +1,7 @@
 ﻿var crypto = require('crypto'),   
-    User = require('../modles/user.js'),
-	Post = require('../modles/post.js'),
-	Comment = require('../modles/comment.js');
+    User = require('../models/user.js'),
+	Post = require('../models/post.js'),
+	Comment = require('../models/comment.js');
 var express = require('express');
 var router = express.Router();
 var multer = require('multer');
@@ -228,10 +228,10 @@ module.exports = function(app) {
 	  }
 	  res.render('search', {
 	    title: "SEARCH:" + req.query.keyword,
-			user: req.body.user,
-			posts: posts,
-			success: req.flash('success').toString(),
-			error: req.flash('error').toString()
+		user: req.body.user,
+		posts: posts,
+		success: req.flash('success').toString(),
+		error: req.flash('error').toString()
 	  });
 	});
   });
@@ -264,14 +264,14 @@ module.exports = function(app) {
 	  });
   });
 
-  app.get('/u/:name/:day/:title', function(req, res){
-	  Post.getOne(req.params.name, req.params.day, req.params.title, function(err, post){
+  app.get('/p/:_id', function(req, res){
+	  Post.getOne(req.params._id, function(err, post){
 			if(err){
 				req.flash('error', err);
 				return res.redirect('/');
 		  }
 		  res.render('article', {
-			  title: req.params.title,
+			  title: post.title,
 			  post: post,
 			  user: req.session.user,
 			  success: req.flash('success').toString(),
